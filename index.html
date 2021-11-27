@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title> </title>
+    <!-- ArcGIS API for JavaScript CSS-->
+    <link rel="stylesheet" href="https://js.arcgis.com/3.30/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.30/esri/css/esri.css">
+
+    <link rel="shortcut icon" type="img/png" href="img/logo/favicon.png" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/styleLight.css?23042020">
+    <link rel="stylesheet" type="text/css" href="css/responsive.css">
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet"
+        type="text/css" />
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script src="js/personal.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- ArcGIS API for JavaScript library references -->
+    <script type="text/javascript">
+        window.dojoConfig = {
+            async: true,
+            packages: [{
+                name: 'app',
+                location: window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + '/src'
+            }]
+        };
+    </script>
+    <script src="https://js.arcgis.com/3.30/"></script>
+    <!-- <script src="js/app.js?09052020"></script>         -->
+    <script src="js/app_LatestChangeUnminified.js"></script>    
+		
+    <style type="text/css">
+        html,
+        body,
+        #mapDiv {
+            height: 98vh;
+            float: right;
+            width: 100%;
+            margin: 0;
+            background-color: rgb(34, 35, 39);
+        }
+
+        #search {
+            display: block;
+            position: fixed;
+            z-index: 2;
+            top: 2%;
+            right: 7%;
+        }
+
+        #homeButton {
+            position: fixed;
+            top: 18px;
+            right: 5%;
+            z-index: 50;
+        }
+
+        /* Extra popup styling */
+
+        .esriPopup .title {
+            /* color: #C36F3E; */
+            font-size: 13px;
+            color: #ffffff;
+            font-weight: 300;
+        }
+
+        .esriPopup a {
+            color: rgb(149, 68, 43);
+            text-decoration: none;
+        }
+
+        .esriPopup.light .titlePane {
+            background-color: #333333 !important;
+            font-size: 16px;
+            padding: 10px;
+        }
+
+        .esriPopup .titleButton.close {
+            filter: alpha(opacity=100);
+            opacity: 1;
+            text-shadow: none;
+        }
+
+        .esriPopup.light .contentPane>p {
+            margin: 5px 0;
+        }
+
+        .esriPopup.light .esriPopupWrapper,
+        .esriPopup.light .pointer,
+        .esriPopup.light .outerPointer {
+            box-shadow: none;
+            -webkit-box-shadow: none;
+        }
+
+        .esriPopup.light .pointer.top,
+        .esriPopup.light .pointer.topLeft,
+        .esriPopup.light .pointer.topRight {
+            background-color: rgba(25, 25, 25, 1);
+        }
+
+        /* Geocoder */
+
+        .simpleGeocoder .esriGeocoderContainer {
+            width: 225px;
+        }
+
+        .simpleGeocoder .esriGeocoder input {
+            width: 160px;
+            font-size: 15px;
+            padding: 6px 0 4px;
+        }
+
+        .simpleGeocoder .esriGeocoderIcon {
+            margin: 7px 0 6px 6px;
+        }
+
+        .simpleGeocoder .esriGeocoderHasValue .esriGeocoderReset {
+            margin: 7px 4px 5px 1px;
+        }
+
+        .esriSimpleSlider div {
+            width: 27px;
+            height: 28px;
+        }
+
+        /* Zoom buttons */
+
+        .esriSimpleSliderTL {
+            top: auto;
+            left: auto;
+            /* left: 16px; */
+        }
+
+        .esriSimpleSliderVertical .esriSimpleSliderIncrementButton,
+        .esriSimpleSliderVertical .esriSimpleSliderDecrementButton {
+            font-size: 24px;
+            line-height: 25px;
+        }
+
+        .popup-data {
+            color: #666366;
+            /* width: fit-content; */
+        }
+
+        .popup-data td,
+        .popup-data {
+            border: none;
+            padding: 2px 10px;
+        }
+
+        .popup-data td:nth-child(1) {
+            text-align: right;
+            min-width: 40%;
+            max-width: 40%;
+            width: 40%;
+        }
+
+        .esriPopup .sizer {
+            width: auto;
+        }
+
+        .popup-data img {
+            max-width: 230px;
+        }
+
+        #mapDiv_gc {
+            z-index: 1;
+        }
+
+        .ui-autocomplete {
+            cursor: pointer;
+            height: 120px;
+            overflow-y: scroll;
+        }
+
+        /* BASEMAPS */
+
+        .esriBasemapGalleryLabelContainer {
+            height: 4.5em;
+        }
+
+        #basemapPopup {
+            display: none;
+        }
+
+        #basemap {
+            position: absolute;
+            top: 1%;
+            right: 0%;
+            z-index: 50;
+            cursor: pointer;
+        }
+
+        .arcgisSearch .searchIcon {
+            line-height: 22px !important;
+        }
+
+        .esriPopup .sizer {
+            width: 450px !important;
+        }
+
+        .pop .widget {
+            width: 250px;
+            position: absolute;
+            height: 98%;
+            top: 5px;
+            overflow: auto;
+            background-color: #000000;
+            bottom: 5px;
+            z-index: 999;
+            border: 1px solid #5c5c5c;
+            margin: auto;
+        }
+
+        #nav-home,
+        #nav-profile {
+            cursor: pointer;
+        }
+
+        #mapDiv_zoom_slider {
+            bottom: 3%;
+            right: 15px;
+            position: fixed;
+        }
+
+        li.active {
+            background-color: #1061a6 !important;
+            color: white !important;
+        }
+
+        .list-group-item.active {
+            background-color: #1061a6 !important;
+            color: white !important;
+        }
+
+        .map .logo-med {
+            margin-bottom: 3px !important;
+        }
+
+        #mapDiv_zoom_slider {
+            bottom: 7%;
+            right: 15px;
+            position: fixed;
+        }
+        
+        .select2-container .select2-selection--single {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 255px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-wrapper chiller-theme toggled">
+        <nav id="sidebar" class="sidebar-wrapper">
+            <div class="sidebar-content">
+                <div class="sidebar-header">
+                    <!-- <img alt="" src="https://www.equitone.com/4b0c44/siteassets/logo/logo-transparent.png?width=150"> -->
+                    <h5 class="project-title">Global Projects</h5>
+                    <!-- <h5 class="cstm-lbl-light">filter</h5> -->
+                </div>
+
+                <div class="sidebar-menu">
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1" class="cstm-lbl">Category</label>
+                        <select class="form-control select2" id="ddlCategory" name="category">
+                            <option>ALL</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1" class="cstm-lbl">Country</label>
+                        <select class="form-control select2" id="ddlCountry" name="country">
+                            <option>ALL</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1" class="cstm-lbl">State</label>
+                        <select class="form-control select2" id="ddlState" name="state">
+                            <option>ALL</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1" class="cstm-lbl">Project</label>
+                        <select class="form-control select2" id="ddlProject" name="project">
+                            <option>ALL</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1" class="cstm-lbl">Architect</label>
+                        <select class="form-control select2" id="ddlArchitect" name="architect">
+                            <option>ALL</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1" class="cstm-lbl">Builder</label>
+                        <select class="form-control select2" id="ddlBuilder" name="builder">
+                            <option>ALL</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1" class="cstm-lbl">Installer</label>
+                        <select class="form-control select2" id="ddlInstaller" name="installer">
+                            <option>ALL</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1" class="cstm-lbl">Material</label>
+                        <select class="form-control select2" id="ddlMaterial" name="material_1">
+                            <option>ALL</option>
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1" class="cstm-lbl">Distributor</label>
+                        <select class="form-control select2" id="ddlDistributor" name="distributor">
+                            <option>ALL</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+        </nav>
+
+        <main class="page-content">
+            <div class="container-fluid">
+                <nav class="widget">
+                    <div id="dragbar"></div>
+                    <!-- <div><i class="fa fa-arrows-alt" id="collapseExpand" aria-hidden="true"></i></div> -->
+                    <div class="widget-content">
+                        <div id="panelCollapseExpand">
+                            <!-- <div><i class="fa fa-arrows" id="hidePanel" aria-hidden="true"></i></div> -->
+                            <a id="collapseExpand" class="left-pane-dock-expand ember-view">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                    viewBox="0 0 16 16" width="12px" height="12px">
+                                    <path vector-effect="non-scaling-stroke"
+                                        d="M9.645 5.648L13.244 2h-3.205V1h4.9v5h-1V2.719l-3.584 3.633zm-4 4L2.06 13.281V10h-1v5h4.9v-1H2.756l3.6-3.648zM14 10.04v3.205l-3.648-3.6-.704.711 3.633 3.584H10v1h5v-4.9zM2 2.756l3.648 3.6.704-.711L2.719 2.06H6v-1H1v4.9h1z">
+                                    </path>
+                                </svg></a>
+                        </div>
+                        <nav style="max-height: 89vh; overflow: auto; background-color:transparent;">
+                            <div class="tab-content" id="nav-tabContent">
+                                <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                                    aria-labelledby="nav-home-tab">
+                                    <div class="widget-list">
+                                        <ul class="list-group list-group-flush">
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                                    aria-labelledby="nav-profile-tab">
+                                    <ul class="list-group list-group-flush">
+                                    </ul>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="flex-fix">
+                        <i>Last update: a few seconds ago</i>
+                    </div>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <!-- <label id="lblUpdatedDate">Last update: 2 minutes ago</label> -->
+                        <a class="nav-item nav-link active tab-content" id="nav-home-tab" data-toggle="tab"
+                            href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Projects</a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile"
+                            role="tab" aria-controls="nav-profile" aria-selected="false">Architects</a>
+                    </div>
+                </nav>
+                <div id="toggleButton" class="rotate collapseactive">
+                    <i class="fa fa-angle-double-down icon-toggle-pane" aria-hidden="true"></i>
+                </div>
+            </div>
+        </main>
+
+        <main class="page-content">
+            <div class="container-fluid" style="height: 96vh;padding-top: 0px;">
+                <div id="mapDiv">
+                </div>
+                <div id="panelCollapseExpand">
+                    <!-- <div><i class="fa fa-arrows" id="hidePanel" aria-hidden="true"></i></div> -->
+                    <a style="left:1056px;top:0px;" id="hidePanel" class="dock-expand ember-view">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            viewBox="0 0 16 16" width="12px" height="12px">
+                            <path vector-effect="non-scaling-stroke"
+                                d="M9.645 5.648L13.244 2h-3.205V1h4.9v5h-1V2.719l-3.584 3.633zm-4 4L2.06 13.281V10h-1v5h4.9v-1H2.756l3.6-3.648zM14 10.04v3.205l-3.648-3.6-.704.711 3.633 3.584H10v1h5v-4.9zM2 2.756l3.648 3.6.704-.711L2.719 2.06H6v-1H1v4.9h1z">
+                            </path>
+                        </svg></a>
+                </div>
+                <div class="tool-pane">
+                    <div id="search" style="width: 32%"></div>
+                    <!-- <div id="homeButton"></div> -->
+                    <a id="homeButton" class="btn-clear btn ember-view ember2004" style="width: 32%;margin-left: 32%;">
+                        <span id="ember2005" class="icon-element ember-view"><svg
+                                xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"
+                                height="16px" width="16px" viewBox="0 0 16 16" id="ember2006" class="ember-view">
+                                <path
+                                    d="M8 0L6 2V0H3v5L0 8h1v8h5v-6h4v6h5V7.978h1zm6 15h-3V9H5v6H2V7.414l2-2V1h1v3.414l3.001-3L14 7.395z">
+                                </path>
+                            </svg></span>
+                    </a>
+
+                    <a id="basemap" class="btn-clear btn ember-view" style="width: 32%"><span id="ember1335"
+                            class="icon-element ember-view"><svg xmlns:xlink="http://www.w3.org/1999/xlink"
+                                xmlns="http://www.w3.org/2000/svg" height="16px" width="16px" viewBox="0 0 16 16"
+                                id="ember1336" class="ember-view">
+                                <path
+                                    d="M.1 6.9h6.8V.1H.1zm6-.8H3.985a2.54 2.54 0 0 1 .506-1.102 4.574 4.574 0 0 0 1.609.805zm0-1.128a3.758 3.758 0 0 1-1.006-.523A3.636 3.636 0 0 1 6.1 3.99zM6.1.9v2.266a4.229 4.229 0 0 0-1.613.73 6.038 6.038 0 0 1-1.1-1.767l.002-.004-.004-.001A8.16 8.16 0 0 1 2.99.9zM.9.9h1.266a8.7 8.7 0 0 0 .359 1.249A1.93 1.93 0 0 1 .9 3.188zm0 3.09a2.828 2.828 0 0 0 2.006-.966 6.343 6.343 0 0 0 .987 1.428A3.367 3.367 0 0 0 3.17 6.1H.9zM9.1.1v6.8h6.8V.1zm.8.8h4.063a.373.373 0 0 1-.045.2.594.594 0 0 1-.438.176 1.637 1.637 0 0 0-1.175.49.91.91 0 0 0-.203.708c-.001.007-.114.736-.607.742a.74.74 0 0 0-.719.384.828.828 0 0 0-.026.6H9.9zm5.2 5.2H9.9V5h2.296l-.474-.639a1.562 1.562 0 0 1-.192-.346c1.041-.03 1.37-1.188 1.365-1.587a.19.19 0 0 1 .028-.154c.031-.037.166-.162.624-.2a1.276 1.276 0 0 0 1.049-.549 1.13 1.13 0 0 0 .16-.625h.344zm-15 9.8h6.8V9.1H.1zm.8-6h5.2v.46l-2 1.973v.867l-3.2-.089zm0 4.01l4 .112v-1.355l1.2-1.182V15.1H.9zm8.2 1.99h6.8V9.1H9.1zm6-.8h-1.792l-1.27-1.572 1.468-1.468 1.594 1.605zm0-5.2v2.628L12.49 9.9zm-5.2 0h1.46l1.581 1.592-1.978 1.98 1.316 1.628H9.9z">
+                                </path>
+                            </svg></span>
+                    </a>
+
+                    <div id="basemapPopup">
+                        <div style="background-color: white;" data-dojo-type="dijit/TitlePane"
+                            data-dojo-props="title:'Switch Basemap', open:true">
+                            <div data-dojo-type="dijit/layout/ContentPane"
+                                style="width:380px; height:280px; overflow:auto;">
+                                <div id="basemapGallery"></div>
+                            </div>
+                        </div>
+                        <!-- <div id="basemapTitle"><img id="basemap" src="images/basemap.jpg" title="Switch base map" alt="Switch base map" /></div> -->
+                        <!-- <div id="basemapPopup">
+                        <div style="background-color: white;" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Switch Basemap', open:true">
+                            <div data-dojo-type="dijit/layout/ContentPane" style="width:380px; height:280px; overflow:auto;">
+                                <div id="basemapGallery"></div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+<script>
+    var themeElements = ['.sidebar-content', '.sidebar-wrapper', '.page-wrapper', '.tool-pane',
+        '#toggleButton', '.widget', '.list-group-item', '.flex-fix', '.arcgisSearch', '.nav-link',
+        '.searchCollapsed', '.searchSubmit', '.tool-pane', '.select2-selection--single', '.searchBtn',
+        '.select2-container--default', '.select2-selection--single', '.list-group .list-group-item', '.select2-selection__rendered',
+        '.select2-results__option', '.select2-search__field', '.select2-results__option', '.searchInput', '.esriSimpleSlider'
+    ];
+
+    function ConvertToLightTheme() {
+        for (var i = 0; i < themeElements.length; i++) {
+            $(themeElements[i]).addClass('lightTheme');
+        }
+        $('.cstm-lbl').addClass('txt-dark');
+        $('.project-title').addClass('txt-dark');
+        $(".select2").on("click", function () {
+            $('.select2-search__field').addClass('grayTheme');
+            $('.select2-results__option').addClass('grayTheme');
+        });
+    }
+
+    function ConvertToDarkTheme() {
+        for (var i = 0; i < themeElements.length; i++) {
+            $(themeElements[i]).removeClass('lightTheme');
+        }
+        $('.cstm-lbl').removeClass('txt-dark');
+        $('.project-title').removeClass('txt-dark');
+        $(".select2").on("click", function () {
+            $('.select2-search__field').removeClass('grayTheme');
+            $('.select2-results__option').removeClass('grayTheme');
+        });
+    }
+</script>
+
+</html>

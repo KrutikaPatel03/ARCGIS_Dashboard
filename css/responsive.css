@@ -1,0 +1,29 @@
+@media only screen and (max-width: 1440px) {
+    .HomeButton .home {
+        width: 32px;
+        height: 25px;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+    .HomeButton .home {
+        width: 32px;
+        height: 24px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    #toggleButton {
+        margin-top: 35%;
+    }
+    #basemap {
+        right: -15% !important;
+    }
+    .HomeButton .home {
+        width: 30px;
+    }
+    .dock-expand svg {
+        top: 1px;
+        right: 10px;
+    }
+}
